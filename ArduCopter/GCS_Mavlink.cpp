@@ -1136,6 +1136,17 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
             }
             break;
 
+        case MAV_CMD_NAV_IDLE:
+            copter.cliSerial->print_P(PSTR("\nIdling...\n"));
+            if (copter.motors.armed() &&  copter.control_mode == GUIDED) {
+                copter.gcs_send_text_P(SEVERITY_HIGH, PSTR("Idling: PAUSING MOTORS..."));
+                result = MAV_RESULT_ACCEPTED;
+            } else {
+                copter.gcs_send_text_P(SEVERITY_HIGH, PSTR("MAV_CMD_NAV_IDLE Command Not Accepted..."));
+                result = MAV_RESULT_FAILED;
+            }
+            break;
+
         case MAV_CMD_NAV_TAKEOFF: {
             // param3 : horizontal navigation by pilot acceptable
             // param4 : yaw angle   (not supported)
