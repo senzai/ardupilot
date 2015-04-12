@@ -1046,6 +1046,21 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
 
         switch(packet.command) {
 
+        case MAV_CMD_NAV_IDLE:
+            cliSerial->print_P(PSTR("\nIdling...\n"));
+            if (motors.armed() &&  control_mode == GUIDED) {
+                gcs_send_text_P(SEVERITY_HIGH, PSTR("Idling: PAUSING MOTORS..."));
+                // set_auto_armed(true);
+                // init_arm_motors(true);
+                int8_t delay_time = (int8_t)packet.param1;
+                // pause_motors(delay_time);
+                result = MAV_RESULT_ACCEPTED;
+            } else {
+                gcs_send_text_P(SEVERITY_HIGH, PSTR("MAV_CMD_NAV_IDLE Command Not Accepted..."));
+                result = MAV_RESULT_FAILED;
+            }
+            break;
+
         case MAV_CMD_NAV_TAKEOFF: {
             // param3 : horizontal navigation by pilot acceptable
             // param4 : yaw angle   (not supported)

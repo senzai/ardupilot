@@ -60,6 +60,14 @@ static void land_gps_run()
         if (ap.land_complete && (ap.throttle_zero || failsafe.radio)) {
             init_disarm_motors();
         }
+#elif LAND_WONT_DISARM_AUTOMATICALLY == ENABLED
+        // Don't disarm automatically after landing unless in radio failsafe mode
+        if (ap.land_complete && failsafe.radio) {
+            init_disarm_motors();
+        } else if (ap.land_complete) {
+            printf("landed");
+        }
+
 #else
         // disarm when the landing detector says we've landed
         if (ap.land_complete) {

@@ -466,6 +466,12 @@ bool AP_Mission::mavlink_to_mission_cmd(const mavlink_mission_item_t& packet, AP
     // command specific conversions from mavlink packet to mission command
     switch (cmd.id) {
 
+    case MAV_CMD_NAV_IDLE:                           // MAV ID: 94
+        copy_location = true;
+        // delay time in seconds (decimal).
+        cmd.p1 = packet.param1;
+        break;
+
     case MAV_CMD_NAV_WAYPOINT:                          // MAV ID: 16
         copy_location = true;
         /*
@@ -770,6 +776,11 @@ bool AP_Mission::mission_cmd_to_mavlink(const AP_Mission::Mission_Command& cmd, 
 
     // command specific conversions from mission command to mavlink packet
     switch (cmd.id) {
+
+    case MAV_CMD_NAV_IDLE:                           // MAV ID: 94 
+      // delay time in seconds (decimal).
+      packet.param1 = cmd.p1;                           // delay in seconds
+      break;
 
     case MAV_CMD_NAV_WAYPOINT:                          // MAV ID: 16
         copy_location = true;

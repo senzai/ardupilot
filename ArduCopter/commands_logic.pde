@@ -1,6 +1,7 @@
 /// -*- tab-width: 4; Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*-
 
 // forward declarations to make compiler happy
+static void do_idle(const AP_Mission::Mission_Command& cmd);
 static void do_takeoff(const AP_Mission::Mission_Command& cmd);
 static void do_nav_wp(const AP_Mission::Mission_Command& cmd);
 static void do_land(const AP_Mission::Mission_Command& cmd);
@@ -30,6 +31,7 @@ static void do_parachute(const AP_Mission::Mission_Command& cmd);
 #if EPM_ENABLED == ENABLED
 static void do_gripper(const AP_Mission::Mission_Command& cmd);
 #endif
+static bool verify_idle(const AP_Mission::Mission_Command& cmd);
 static bool verify_nav_wp(const AP_Mission::Mission_Command& cmd);
 static bool verify_circle(const AP_Mission::Mission_Command& cmd);
 static bool verify_spline_wp(const AP_Mission::Mission_Command& cmd);
@@ -51,6 +53,10 @@ static bool start_command(const AP_Mission::Mission_Command& cmd)
     ///
     /// navigation commands
     ///
+    case MAV_CMD_NAV_IDLE:                           // MAV ID: 212
+        do_idle(cmd);
+        break;
+
     case MAV_CMD_NAV_TAKEOFF:                   // 22
         do_takeoff(cmd);
         break;
@@ -205,6 +211,10 @@ static bool verify_command(const AP_Mission::Mission_Command& cmd)
     //
     // navigation commands
     //
+    case MAV_CMD_NAV_IDLE:
+        return verify_idle(cmd);
+        break;
+
     case MAV_CMD_NAV_TAKEOFF:
         return verify_takeoff();
         break;
@@ -303,6 +313,23 @@ static void exit_mission()
 /********************************************************************************/
 //
 /********************************************************************************/
+
+static void do_idle(const AP_Mission::Mission_Command& cmd)
+{
+
+    // if we are not on the ground switch to loiter or land
+    if(!ap.land_complete) {
+        // Shouldn't stop motors unless landed
+        gcs_send_text_P(SEVERITY_HIGH, PSTR("Can't Idle Unless Landed..."));
+    }else{
+        // stop motors when the landing detector says we've landed
+        attitude_control.set_throttle_out_unstabilized(0, true, g.throttle_filt);
+        condition_start = millis();
+        condition_value = cmd.p1 * 1000;     // convert seconds to milliseconds
+        gcs_send_text_fmt(PSTR("Start Idling for #%i seconds"),condition_value/1000);
+    }
+}
+
 
 // do_RTL - start Return-to-Launch
 static void do_RTL(void)
@@ -583,6 +610,23 @@ static void do_guided_limits(const AP_Mission::Mission_Command& cmd)
 /********************************************************************************/
 //	Verify Nav (Must) commands
 /********************************************************************************/
+
+// verify_idle
+static bool verify_idle(const AP_Mission::Mission_Command& cmd)
+{
+    if (millis() - condition_start > (uint32_t)max(condition_value,0)) {
+        // cliSerial->printf_P(PSTR("\nDone Idling for %i seconds\n"),condition_value/1000);
+        // gcs_send_text_P(SEVERITY_LOW, PSTR("Done Idling. Restarting Motors..."));
+        gcs_send_text_fmt(PSTR("Done Idling for #%i seconds. Restarting Motors... "),condition_value/1000);
+        condition_value = 0;
+        set_auto_armed(true);
+        attitude_control.set_throttle_out_unstabilized(0, true, g.throttle_filt);
+        return true;
+    }
+    attitude_control.set_throttle_out_unstabilized(0, true, g.throttle_filt);
+    // cliSerial->printf_P(PSTR("\nIdling Remaining: %i"), millis()-condition_start/1000);
+    return false;
+}
 
 // verify_takeoff - check if we have completed the takeoff
 static bool verify_takeoff()
