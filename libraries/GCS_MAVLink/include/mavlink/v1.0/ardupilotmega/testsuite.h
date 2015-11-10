@@ -1660,6 +1660,55 @@ static void mavlink_test_led_control(uint8_t system_id, uint8_t component_id, ma
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 }
 
+static void mavlink_test_led_set_colour(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
+{
+	mavlink_message_t msg;
+        uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
+        uint16_t i;
+	mavlink_led_set_colour_t packet_in = {
+		5,72,139,206,17,84,151
+    };
+	mavlink_led_set_colour_t packet1, packet2;
+        memset(&packet1, 0, sizeof(packet1));
+        	packet1.target_system = packet_in.target_system;
+        	packet1.target_component = packet_in.target_component;
+        	packet1.instance_id = packet_in.instance_id;
+        	packet1.red = packet_in.red;
+        	packet1.green = packet_in.green;
+        	packet1.blue = packet_in.blue;
+        	packet1.pattern = packet_in.pattern;
+        
+        
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_led_set_colour_encode(system_id, component_id, &msg, &packet1);
+	mavlink_msg_led_set_colour_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_led_set_colour_pack(system_id, component_id, &msg , packet1.target_system , packet1.target_component , packet1.instance_id , packet1.red , packet1.green , packet1.blue , packet1.pattern );
+	mavlink_msg_led_set_colour_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_led_set_colour_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.target_system , packet1.target_component , packet1.instance_id , packet1.red , packet1.green , packet1.blue , packet1.pattern );
+	mavlink_msg_led_set_colour_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+        mavlink_msg_to_send_buffer(buffer, &msg);
+        for (i=0; i<mavlink_msg_get_send_buffer_length(&msg); i++) {
+        	comm_send_ch(MAVLINK_COMM_0, buffer[i]);
+        }
+	mavlink_msg_led_set_colour_decode(last_msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+        
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_led_set_colour_send(MAVLINK_COMM_1 , packet1.target_system , packet1.target_component , packet1.instance_id , packet1.red , packet1.green , packet1.blue , packet1.pattern );
+	mavlink_msg_led_set_colour_decode(last_msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+}
+
 static void mavlink_test_mag_cal_progress(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
 {
 	mavlink_message_t msg;
@@ -2810,6 +2859,7 @@ static void mavlink_test_ardupilotmega(uint8_t system_id, uint8_t component_id, 
 	mavlink_test_ahrs3(system_id, component_id, last_msg);
 	mavlink_test_autopilot_version_request(system_id, component_id, last_msg);
 	mavlink_test_led_control(system_id, component_id, last_msg);
+	mavlink_test_led_set_colour(system_id, component_id, last_msg);
 	mavlink_test_mag_cal_progress(system_id, component_id, last_msg);
 	mavlink_test_mag_cal_report(system_id, component_id, last_msg);
 	mavlink_test_ekf_status_report(system_id, component_id, last_msg);

@@ -298,6 +298,18 @@
         <entry name="LED_CONTROL_PATTERN_CUSTOM" value="255"> <description>Custom Pattern using custom bytes fields</description></entry>
     </enum>
 
+    <!-- led set color enums (enumeration of specific patterns) -->
+    <enum name="LED_SET_COLOUR_PATTERN">
+      <entry name="LED_SET_COLOUR_PATTERN_OFF" value="0"> <description>LED patterns off (return control to regular vehicle notification and status indicator)</description></entry>
+        <entry name="LED_SET_COLOUR_PATTERN_SINE" value="1"> <description>LED Solid pattern</description></entry>
+        <entry name="LED_SET_COLOUR_PATTERN_SOLID" value="2"> <description>LED Solid pattern</description></entry>
+        <entry name="LED_SET_COLOUR_PATTERN_SIREN" value="3"> <description>LED Siren pattern</description></entry>
+        <entry name="LED_SET_COLOUR_PATTERN_STROBE" value="4"> <description>LED Strobe pattern</description></entry>
+        <entry name="LED_SET_COLOUR_PATTERN_FADEIN" value="5"> <description>LED Fade-in pattern</description></entry>
+        <entry name="LED_SET_COLOUR_PATTERN_FADEOUT" value="6"> <description>LED Fade-out pattern</description></entry>
+        <entry name="LED_SET_COLOUR_PATTERN_CUSTOM" value="255"> <description>Custom Pattern using custom bytes fields</description></entry>
+    </enum>
+
 	<!-- EKF_STATUS_FLAGS - these values should be bit-and with the messages flags field to know if flag has been set -->
     <enum name="EKF_STATUS_FLAGS">
         <description>Flags in EKF_STATUS message</description>
@@ -708,6 +720,17 @@
         <field type="uint8_t" name="pattern">Pattern (see LED_PATTERN_ENUM)</field>
         <field type="uint8_t" name="custom_len">Custom Byte Length</field>
         <field type="uint8_t[24]" name="custom_bytes">Custom Bytes</field>
+    </message>
+
+    <message name="LED_SET_COLOUR" id="189">
+        <description>Set RGB colour on full-colour Auxiliary LEDs</description>
+        <field type="uint8_t" name="target_system">System ID</field>
+        <field type="uint8_t" name="target_component">Component ID</field>
+        <field type="uint8_t" name="instance_id">Instance ID of the LED to modify. (Set this to 0xFF for all LEDs)</field>
+        <field type="uint8_t" name="red">Red Colour Value (0x00-0xFF)</field>
+        <field type="uint8_t" name="green">Green Colour Value (0x00-0xFF)</field>
+        <field type="uint8_t" name="blue">Blue Colour Value (0x00-0xFF)</field>
+        <field type="uint8_t" name="pattern">Pattern (see LED_SET_COLOUR_PATTERN enum)</field>
     </message>
 
     <message name="MAG_CAL_PROGRESS" id="191">
