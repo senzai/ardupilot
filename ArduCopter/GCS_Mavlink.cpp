@@ -1797,6 +1797,11 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
         AP_Notify::handle_led_control(msg);
         break;
 
+    case MAVLINK_MSG_ID_LED_SET_COLOUR:
+        // send message to Notify
+        AP_Notify::handle_led_set_colour(msg);
+        break;
+
     }     // end switch
 } // end handle mavlink
 

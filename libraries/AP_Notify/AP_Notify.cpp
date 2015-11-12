@@ -23,13 +23,14 @@ struct AP_Notify::notify_events_type AP_Notify::events;
 #if CONFIG_HAL_BOARD == HAL_BOARD_PX4
     AP_BoardLED boardled;
     ToshibaLED_PX4 toshibaled;
+    BlinkMLED_I2C blinkmled;
     ToneAlarm_PX4 tonealarm;
-#if OREOLED_ENABLED
-    OreoLED_PX4 oreoled;
-    NotifyDevice *AP_Notify::_devices[] = {&boardled, &toshibaled, &tonealarm, &oreoled};
-#else
-    NotifyDevice *AP_Notify::_devices[] = {&boardled, &toshibaled, &tonealarm};
-#endif
+    #if OREOLED_ENABLED
+        OreoLED_PX4 oreoled;
+        NotifyDevice *AP_Notify::_devices[] = {&boardled, &toshibaled, &tonealarm, &oreoled};
+    #else
+        NotifyDevice *AP_Notify::_devices[] = {&boardled, &toshibaled, &blinkmled, &tonealarm};
+    #endif
 #elif CONFIG_HAL_BOARD == HAL_BOARD_APM1 || CONFIG_HAL_BOARD == HAL_BOARD_APM2 
     AP_BoardLED boardled;
     ExternalLED externalled;
@@ -44,7 +45,8 @@ struct AP_Notify::notify_events_type AP_Notify::events;
 #endif
     ToshibaLED_I2C toshibaled;
     ExternalLED externalled;
-    NotifyDevice *AP_Notify::_devices[] = {&boardled, &toshibaled, &externalled, &buzzer};
+    BlinkMLED_I2C blinkmled;
+    NotifyDevice *AP_Notify::_devices[] = {&boardled, &toshibaled, &externalled, &blinkmled, &buzzer};
 #elif CONFIG_HAL_BOARD == HAL_BOARD_LINUX
     #if CONFIG_HAL_BOARD_SUBTYPE == HAL_BOARD_SUBTYPE_LINUX_NAVIO
         AP_BoardLED boardled;
@@ -60,7 +62,8 @@ struct AP_Notify::notify_events_type AP_Notify::events;
 #else
     AP_BoardLED boardled;
     ToshibaLED_I2C toshibaled;
-    NotifyDevice *AP_Notify::_devices[] = {&boardled, &toshibaled};
+    BlinkMLED_I2C blinkmled;
+    NotifyDevice *AP_Notify::_devices[] = {&boardled, &toshibaled, &blinkmled};
 #endif
 
 #define CONFIG_NOTIFY_DEVICES_COUNT (ARRAY_SIZE(AP_Notify::_devices))
@@ -95,5 +98,13 @@ void AP_Notify::handle_led_control(mavlink_message_t *msg)
 {
     for (uint8_t i = 0; i < CONFIG_NOTIFY_DEVICES_COUNT; i++) {
         _devices[i]->handle_led_control(msg);
+    }
+}
+
+// handle a LED_CONTROL message
+void AP_Notify::handle_led_set_colour(mavlink_message_t *msg)
+{
+    for (uint8_t i = 0; i < CONFIG_NOTIFY_DEVICES_COUNT; i++) {
+        _devices[i]->handle_led_set_colour(msg);
     }
 }

@@ -31,6 +31,7 @@
 #include "Buzzer.h"
 #include "VRBoard_LED.h"
 #include "OreoLED_PX4.h"
+#include "BlinkMLED_I2C.h"
 
 #ifndef OREOLED_ENABLED
  # define OREOLED_ENABLED   0   // set to 1 to enable OreoLEDs
@@ -87,6 +88,9 @@ public:
 
     // handle a LED_CONTROL message
     static void handle_led_control(mavlink_message_t* msg);
+
+    // handle a LED_SET_COLOUR message
+    static void handle_led_set_colour(mavlink_message_t* msg);
 
 private:
     static NotifyDevice* _devices[];
