@@ -14,6 +14,8 @@ public:
     virtual void update() = 0;
     // handle a LED_CONTROL message, by default device ignore message
     virtual void handle_led_control(mavlink_message_t *msg) {}
+    // handle a LED_SET_COLOUR message. By default, devices should ignore this message
+    virtual void handle_led_set_colour(mavlink_message_t *msg) {}
 };
 
 #endif
