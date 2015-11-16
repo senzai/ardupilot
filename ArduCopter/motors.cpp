@@ -629,6 +629,12 @@ bool Copter::pre_arm_gps_checks(bool display_failure)
         return true;
     }
 
+    // return true immediately if EKF_GPS_TYPE == 3 (Optical Flow)
+    if (ahrs.get_NavEKF().getFusionModeGPS() == 3) {
+        AP_Notify::flags.pre_arm_gps_check = true;
+        return true;
+    }
+
     // ensure GPS is ok
     if (!position_ok()) {
         if (display_failure) {

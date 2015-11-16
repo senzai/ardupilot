@@ -137,6 +137,10 @@ public:
     // Returns 2 if attitude, 3D-velocity, vertical position and relative horizontal position will be provided
     uint8_t setInhibitGPS(void);
 
+    // return the value of _fusionModeGPS which checks if EKF_GPS_TYPE is set to 3 and if OpticalFlow is enabled
+    // EKF_GPS_TYPE: 0 = use 3D velocity, 1 = use 2D velocity, 2 = use no velocity
+    AP_Int8 getFusionModeGPS(void);
+
     // return the horizontal speed limit in m/s set by optical flow sensor limits
     // return the scale factor to be applied to navigation velocity gains to compensate for increase in velocity noise with height when using optical flow
     void getEkfControlLimits(float &ekfGndSpdLimit, float &ekfNavVelGainScaler) const;
