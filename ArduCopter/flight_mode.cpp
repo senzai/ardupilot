@@ -10,7 +10,7 @@
 // set_mode - change flight mode and perform any necessary initialisation
 // optional force parameter used to force the flight mode change (used only first time mode is set)
 // returns true if mode was succesfully set
-// ACRO, STABILIZE, ALTHOLD, LAND, DRIFT and SPORT can always be set successfully but the return state of other flight modes should be checked and the caller should deal with failures appropriately
+// ACRO, STABILIZE, ALT_HOLD, LAND and SPORT can always be set successfully but the return state of other flight modes should be checked and the caller should deal with failures appropriately
 bool Copter::set_mode(uint8_t mode)
 {
     // boolean to record if flight mode could be set
@@ -41,6 +41,10 @@ bool Copter::set_mode(uint8_t mode)
 
         case ALT_HOLD:
             success = althold_init(ignore_checks);
+            break;
+
+        case SINGLESTICK:
+            success = singlestick_init(ignore_checks);
             break;
 
         case AUTO:
@@ -153,6 +157,10 @@ void Copter::update_flight_mode()
 
         case ALT_HOLD:
             althold_run();
+            break;
+
+        case SINGLESTICK:
+            singlestick_run();
             break;
 
         case AUTO:
@@ -268,6 +276,7 @@ bool Copter::mode_requires_GPS(uint8_t mode) {
         case RTL:
         case CIRCLE:
         case DRIFT:
+        case SINGLESTICK:
         case POSHOLD:
         case BRAKE:
             return true;
@@ -294,7 +303,7 @@ bool Copter::mode_has_manual_throttle(uint8_t mode) {
 // mode_allows_arming - returns true if vehicle can be armed in the specified mode
 //  arming_from_gcs should be set to true if the arming request comes from the ground station
 bool Copter::mode_allows_arming(uint8_t mode, bool arming_from_gcs) {
-    if (mode_has_manual_throttle(mode) || mode == LOITER || mode == ALT_HOLD || mode == POSHOLD || (arming_from_gcs && mode == GUIDED)) {
+    if (mode_has_manual_throttle(mode) || mode == LOITER || mode == ALT_HOLD || mode == SINGLESTICK || mode == POSHOLD || (arming_from_gcs && mode == GUIDED)) {
         return true;
     }
     return false;
@@ -332,6 +341,9 @@ void Copter::print_flight_mode(AP_HAL::BetterStream *port, uint8_t mode)
         break;
     case ALT_HOLD:
         port->print_P(PSTR("ALT_HOLD"));
+        break;
+    case SINGLESTICK:
+        port->print_P(PSTR("SINGLESTICK"));
         break;
     case AUTO:
         port->print_P(PSTR("AUTO"));

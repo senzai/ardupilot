@@ -642,7 +642,7 @@
 #define THR_MAX                 1000            // maximum throttle input and output sent to the motors
 
 #ifndef THR_DZ_DEFAULT
-# define THR_DZ_DEFAULT         100             // the deadzone above and below mid throttle while in althold or loiter
+# define THR_DZ_DEFAULT         100             // the deadzone above and below mid throttle while in althold, singlestick or loiter
 #endif
 
 #ifndef ALT_HOLD_P

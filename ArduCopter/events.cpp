@@ -65,7 +65,7 @@ void Copter::failsafe_radio_on_event()
             }
             // no break
         default:
-            // used for AltHold, Guided, Loiter, RTL, Circle, Drift, Sport, Flip, Autotune, PosHold
+            // used for AltHold, SingleStick, Guided, Loiter, RTL, Circle, Drift, Sport, Flip, Autotune, PosHold
             // if landed disarm
             if (ap.land_complete) {
                 init_disarm_motors();
@@ -139,7 +139,7 @@ void Copter::failsafe_battery_event(void)
                 }
                 break;
             default:
-                // used for AltHold, Guided, Loiter, RTL, Circle, Drift, Sport, Flip, Autotune, PosHold
+                // used for AltHold, SingleStick, Guided, Loiter, RTL, Circle, Drift, Sport, Flip, Autotune, PosHold
                 // if landed disarm
                 if (ap.land_complete) {
                     init_disarm_motors();
@@ -237,7 +237,7 @@ void Copter::failsafe_gcs_check()
             // if failsafe_throttle is 2 (i.e. FS_THR_ENABLED_CONTINUE_MISSION) no need to do anything
             break;
         default:
-            // used for AltHold, Guided, Loiter, RTL, Circle, Drift, Sport, Flip, Autotune, PosHold
+            // used for AltHold, SingleStick, Guided, Loiter, RTL, Circle, Drift, Sport, Flip, Autotune, PosHold
             // if landed disarm
             if (ap.land_complete) {
                 init_disarm_motors();

@@ -2,7 +2,7 @@
 
 #include "Copter.h"
 
-// This file contains the high-level takeoff logic for Loiter, PosHold, AltHold, Sport modes.
+// This file contains the high-level takeoff logic for Loiter, PosHold, AltHold, SingleStick, Sport modes.
 //   The take-off can be initiated from a GCS NAV_TAKEOFF command which includes a takeoff altitude
 //   A safe takeoff speed is calculated and used to calculate a time_ms
 //   the pos_control target is then slowly increased until time_ms expires
@@ -17,6 +17,7 @@ bool Copter::current_mode_has_user_takeoff(bool must_navigate)
         case POSHOLD:
             return true;
         case ALT_HOLD:
+        case SINGLESTICK:
         case SPORT:
             return !must_navigate;
         default:
@@ -44,6 +45,7 @@ bool Copter::do_user_takeoff(float takeoff_alt_cm, bool must_navigate)
             case LOITER:
             case POSHOLD:
             case ALT_HOLD:
+            case SINGLESTICK:
             case SPORT:
                 set_auto_armed(true);
                 takeoff_timer_start(takeoff_alt_cm);

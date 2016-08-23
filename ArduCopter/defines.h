@@ -97,6 +97,7 @@ enum autopilot_modes {
     LAND =          9,  // automatic landing with horizontal position control
     OF_LOITER =    10,  // deprecated
     DRIFT =        11,  // semi-automous position, yaw and throttle control
+    SINGLESTICK =  12,  // drift + alt_hold hybrid
     SPORT =        13,  // manual earth-frame angular rate control with manual throttle
     FLIP =         14,  // automatically flip the vehicle on the roll axis
     AUTOTUNE =     15,  // automatically tune the vehicle's roll and pitch gains
@@ -203,6 +204,15 @@ enum AltHoldModeState {
     AltHold_Takeoff,
     AltHold_Flying,
     AltHold_Landed
+};
+
+// SingleStick states
+enum SingleStickModeState {
+    SingleStick_Disarmed,
+    SingleStick_MotorStop,
+    SingleStick_Takeoff,
+    SingleStick_Flying,
+    SingleStick_Landed
 };
 
 // Loiter states

@@ -155,6 +155,7 @@ NOINLINE void Copter::send_extended_status1(mavlink_channel_t chan)
 
     switch (control_mode) {
     case ALT_HOLD:
+    case SINGLESTICK:
     case AUTO:
     case GUIDED:
     case LOITER:
